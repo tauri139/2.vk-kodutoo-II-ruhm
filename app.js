@@ -15,7 +15,7 @@
 
      console.log('moosipurgi sees');
 
-     // KÃ•IK muuutujad, mida muudetakse ja on rakendusega seotud defineeritakse siin
+     // KÕIK muuutujad, mida muudetakse ja on rakendusega seotud defineeritakse siin
      this.click_count = 0;
      this.currentRoute = null;
      console.log(this);
@@ -23,7 +23,7 @@
      // hakkan hoidma kõiki purke
      this.tasks = [];
 
-     // Kui tahan Moosipurgile referenci siis kasutan THIS = MOOSIPURGI RAKENDUS ISE
+     // Kui tahan ToDole referenci siis kasutan THIS = ToDo RAKENDUS ISE
      this.init();
    };
 
@@ -55,7 +55,7 @@
      }
    };
 
-   // Kõik funktsioonid lähevad Moosipurgi külge
+   // Kõik funktsioonid lähevad ToDo külge
    ToDo.prototype = {
 
      init: function(){
@@ -98,10 +98,10 @@
             ToDo.instance.tasks = JSON.parse(xhttp.responseText);
             console.log(ToDo.instance.tasks);
 
-            //teen purgid htmli
+            //teen ülesanded htmli
 					ToDo.instance.tasks.forEach(function(item){
 
-					   var new_item = new Item(item.id, item.title, item.task);
+					   var new_item = new Item(item.id, item.title, item.task, item.due_date);
 
 					   var li = new_item.createHtmlElement();
 					   document.querySelector('.list-of-tasks').appendChild(li);
@@ -213,11 +213,12 @@
 
        var title = document.querySelector('.title').value;
        var task = document.querySelector('.task').value;
+       var due_date = document.querySelector('.due_date').value;
 
        //console.log(title + ' ' + task);
        //1) tekitan uue Item'i
 	   var id = guid();
-       var new_item = new Item(id, title, task);
+       var new_item = new Item(id, title, task, due_date);
 
        //lisan massiiivi ülesande
        this.tasks.push(new_item);
@@ -241,7 +242,7 @@
 		};
 
 		//teeb päringu
-		xhttp.open("GET", "save.php?id="+id+"&title="+title+"&task="+task, true);
+		xhttp.open("GET", "save.php?id="+id+"&title="+title+"&task="+task+"due_date"+due_date, true);
 		xhttp.send();
 
 
@@ -287,10 +288,11 @@
 
    }; //ToDo LÕPP
 
-   var Item = function(new_id, new_title, new_task){
+   var Item = function(new_id, new_title, new_task, new_due_date){
 	 this.id = new_id;
      this.title = new_title;
      this.task = new_task;
+     this.due_date = new_due_date;
      console.log('created new item');
    };
 
@@ -319,7 +321,7 @@
        var span_with_content = document.createElement('span');
        span_with_content.className = 'content';
 
-       var content = document.createTextNode(this.title + ' | ' + this.task);
+       var content = document.createTextNode(this.title + ' | ' + this.task + ' | ' + this.due_date);
        span_with_content.appendChild(content);
 
        li.appendChild(span_with_content);
@@ -358,7 +360,7 @@
 		return uuid;
 	}
 
-   // kui leht laetud käivitan Moosipurgi rakenduse
+   // kui leht laetud käivitan ToDo rakenduse
    window.onload = function(){
      var app = new ToDo();
    };

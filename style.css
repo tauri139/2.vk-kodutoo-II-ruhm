@@ -91,7 +91,8 @@ main {
     float: right;
 }
 .title,
-.task {
+.task,
+.due_date {
     width: 100%;
     margin-bottom: 10px;
     margin-top: 4px;
