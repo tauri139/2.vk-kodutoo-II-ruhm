@@ -13,7 +13,7 @@
      this.routes = ToDo.routes;
      // this.routes['home-view'].render()
 
-     console.log('moosipurgi sees');
+     console.log('ToDo sees');
 
      // KÕIK muuutujad, mida muudetakse ja on rakendusega seotud defineeritakse siin
      this.click_count = 0;
@@ -92,21 +92,23 @@
        }else {
          //küsin AJAXiga
          var xhttp = new XMLHttpRequest();
-     		xhttp.onreadystatechange = function() {
-     			if (xhttp.readyState == 4 && xhttp.status == 200) {
-     				console.log(xhttp.responseText);
-            ToDo.instance.tasks = JSON.parse(xhttp.responseText);
-            console.log(ToDo.instance.tasks);
+         xhttp.onreadystatechange = function() {
+           if (xhttp.readyState == 4 && xhttp.status == 200) {
+              console.log(xhttp.responseText);
+              ToDo.instance.tasks=JSON.parse(xhttp.responseText);
+              console.log(ToDo.instance.tasks);
 
             //teen ülesanded htmli
-					ToDo.instance.tasks.forEach(function(item){
+            ToDo.instance.tasks.forEach(function(item){
 
-					   var new_item = new Item(item.id, item.title, item.task, item.due_date);
+              console.log("jõudsin doreach'i");
 
-					   var li = new_item.createHtmlElement();
-					   document.querySelector('.list-of-tasks').appendChild(li);
+              var new_item = new Item(item.id, item.title, item.task, item.due_date);
 
-				   });
+              var li = new_item.createHtmlElement();
+
+              document.querySelector('.list-of-tasks').appendChild(li);
+            });
 
 				   //salvestan localStoragisse
 				   localStorage.setItem('tasks', JSON.stringify(ToDo.instance.tasks));
