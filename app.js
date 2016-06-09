@@ -159,13 +159,11 @@
       ul.removeChild(li);
 
       //KUSTUTAN OBJEKTI ja uuenda localStoragit
-
       var delete_id = event.target.dataset.id;
 
       for(var i = 0; i < this.tasks.length; i++){
 
         if(this.tasks[i].id == delete_id){
-          //see on see
           //kustuta kohal i objekt ära
           this.tasks.splice(i, 1);
           break;
@@ -190,8 +188,66 @@
 
       //teeb päringu
       xhttp.open("GET", "delete.php?delete_id="+delete_id, true);
+
       xhttp.send();
       console.log(delete_id);
+
+    },
+    changeItem: function(event){
+      var c = confirm("Oled kindel?");
+
+      // vajutas no, pani ristist kinni
+      if(!c){	return; }
+
+      //MUUDAN
+      console.log('muudan');
+
+      var change_id = event.target.dataset.id;
+
+      var li = event.target.parentNode;
+
+      document.querySelector('.change').style.display = 'block';
+
+      if(0<1){
+
+        for(var i = 0; i < this.tasks.length; i++){
+
+          if(this.tasks[i].id == change_id){
+            //muuda kohal i objekt ära
+            console.log("MUUTMINE HAKKAS PIHTA");
+            break;
+          }
+        }
+
+        localStorage.setItem('tasks', JSON.stringify(this.tasks));
+
+        //AJAX
+        var xhttp = new XMLHttpRequest();
+
+        //mis juhtub kui päring lõppeb
+        xhttp.onreadystatechange = function() {
+
+          console.log(xhttp.readyState);
+
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+
+            console.log(xhttp.responseText);
+          }
+        };
+
+        delete_id = change_id;
+        id = change_id;
+
+        //teeb päringu
+        //xhttp.open("GET", "change.php?change_id="+change_id, true);
+        xhttp.open("GET", "delete.php?delete_id="+delete_id, true);
+        xhttp.open("GET", "save.php?id="+id+"&title="+title+"&task="+task+"&due_date="+due_date, true);
+        xhttp.send();
+        console.log(change_id);
+      }else{
+        console.log("Ei muudetud midagi");
+      }
+
 
     },
     search: function(event){
@@ -339,14 +395,29 @@
       //kustutamiseks panen id kaasa
       span_delete.setAttribute("data-id", this.id);
 
-      span_delete.innerHTML = " Delete";
+      span_delete.innerHTML = "  Kustuta";
 
       li.appendChild(span_delete);
 
       //keegi vajutas nuppu
       span_delete.addEventListener("click", ToDo.instance.deleteItem.bind(ToDo.instance));
 
+
+
+      //CHANGE nupp
+      var span_change = document.createElement('span');
+      span_change.style.color = "green";
+      span_change.style.cursor = "pointer";
+
+      //muutmiseks id kaasa
+      span_change.setAttribute("data-id", this.id);
+      span_change.innerHTML = "  Muuda";
+      li.appendChild(span_change);
+      //keegi vajutas nuppu
+      span_change.addEventListener("click", ToDo.instance.changeItem.bind(ToDo.instance));
+
       return li;
+
     }
   };
 
