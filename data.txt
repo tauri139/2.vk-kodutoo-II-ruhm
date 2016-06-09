@@ -1,1 +1,1 @@
-[{"id":"a1dbfea9-169f-42cf-b258-31842eb091c3","title":"sasdasd","task":"asdasdasd","due_date":"2014-02-02"}]
+[{"id":"a1dbfea9-169f-42cf-b258-31842eb091c3","title":"sasdasd","task":"asdasdasd","due_date":"2014-02-02"},{"id":"3bf69277-800a-4b7a-b10b-a6d2cd6572de","title":"tere","task":"t\u00f6\u00f6tab?","due_date":"2222-02-22"}]

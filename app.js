@@ -20,7 +20,7 @@
      this.currentRoute = null;
      console.log(this);
 
-     // hakkan hoidma kõiki purke
+     // hakkan hoidma kõiki ülesandeid
      this.tasks = [];
 
      // Kui tahan ToDole referenci siis kasutan THIS = ToDo RAKENDUS ISE
@@ -73,7 +73,7 @@
          this.routeChange();
        }
 
-       //saan kätte purgid localStorage kui on
+       //saan kätte ülesanded localStorage'ist kui on
        if(localStorage.tasks){
            //võtan stringi ja teen tagasi objektideks
            this.tasks = JSON.parse(localStorage.tasks);
@@ -96,13 +96,10 @@
            if (xhttp.readyState == 4 && xhttp.status == 200) {
               console.log(xhttp.responseText);
               ToDo.instance.tasks=JSON.parse(xhttp.responseText);
-              console.log(ToDo.instance.tasks);
+              console.log(ToDo.instance.tasks + "teen nüüd seda");
 
             //teen ülesanded htmli
             ToDo.instance.tasks.forEach(function(item){
-
-              console.log("jõudsin doreach'i");
-
               var new_item = new Item(item.id, item.title, item.task, item.due_date);
 
               var li = new_item.createHtmlElement();
@@ -244,7 +241,7 @@
 		};
 
 		//teeb päringu
-		xhttp.open("GET", "save.php?id="+id+"&title="+title+"&task="+task+"due_date"+due_date, true);
+		xhttp.open("GET", "save.php?id="+id+"&title="+title+"&task="+task+"&due_date="+due_date, true);
 		xhttp.send();
 
 
