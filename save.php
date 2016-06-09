@@ -21,23 +21,7 @@
 
     file_put_contents($file_name, $json);
 
-
-
   }
-
-/* EI TÖÖTA
- if(isset($_GET["delete"]) && !emtpy($_GET["delete"])){
-    function in_array_r($id, $title, $task = false) {
-    foreach ($id as $item) {
-        if (($strict ? $item === $_GET["delete"] : $item == $id) || (is_array($item) && in_array_r($needle, $item, $strict))) {
-            return true;
-        }
-    }
-
-      return false;
-    }
-  }
-  */
 
   echo(json_encode($entries));
 

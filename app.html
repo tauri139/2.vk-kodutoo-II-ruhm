@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <nav class="menu">
     <ul class="menu-list">
       <li class="menu-item"><a href="#home-view" class="menu-link home-view active-menu">Avaleht</a></li>
@@ -21,17 +20,17 @@
     <div id="list-view">
       <h1>Loend</h1>
       <p class="loading">Laeb...</p><br>
-      <input type="search" placeholder="Enter keyword" id="search"><br>
+      <input type="search" placeholder="Otsi ülesannet..." id="search"><br>
       <ul class="list-of-tasks"></ul>
     </div>
     <div id="manage-view">
       <h1>Haldus</h1>
 
       <label for="title">Nimi: </label><br>
-      <input type="text" name="title" class="title"><br>
+      <input type="text" placeholder="..." name="title" class="title"><br>
 
       <label for="task">Ülesanne: </label><br>
-      <input type="text" name="task" class="task"><br>
+      <input type="text" placeholder="..." name="task" class="task"><br>
 
       <label for="due_date">Kuupäevaks: </lable><br>
       <input type="date" name="due_date" class="due_date"><br>
@@ -41,6 +40,7 @@
 
     <div id="home-view">
       <h1>Avaleht</h1>
+      <p>Siin saab märkida enda ülesandeid.</p>
     </div>
 
   </main>

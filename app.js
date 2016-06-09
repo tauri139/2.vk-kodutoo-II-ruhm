@@ -1,102 +1,102 @@
-(function(){
-   "use strict";
+  (function(){
+  "use strict";
 
-   var ToDo = function(){
+  var ToDo = function(){
+    // SEE ON SINGLETON PATTERN
+    if(ToDo.instance){
+      return ToDo.instance;
+    }
+    //this viitab ToDo fn
+    ToDo.instance = this;
 
-     // SEE ON SINGLETON PATTERN
-     if(ToDo.instance){
-       return ToDo.instance;
-     }
-     //this viitab ToDo fn
-     ToDo.instance = this;
+    this.routes = ToDo.routes;
+    // this.routes['home-view'].render()
 
-     this.routes = ToDo.routes;
-     // this.routes['home-view'].render()
+    console.log('ToDo sees');
 
-     console.log('ToDo sees');
+    // KÕIK muuutujad, mida muudetakse ja on rakendusega seotud defineeritakse siin
+    this.click_count = 0;
+    this.currentRoute = null;
+    console.log(this);
 
-     // KÕIK muuutujad, mida muudetakse ja on rakendusega seotud defineeritakse siin
-     this.click_count = 0;
-     this.currentRoute = null;
-     console.log(this);
+    // hakkan hoidma kõiki ülesandeid
+    this.tasks = [];
 
-     // hakkan hoidma kõiki ülesandeid
-     this.tasks = [];
+    // Kui tahan ToDole referenci siis kasutan THIS = ToDo RAKENDUS ISE
+    this.init();
+  };
 
-     // Kui tahan ToDole referenci siis kasutan THIS = ToDo RAKENDUS ISE
-     this.init();
-   };
+  window.ToDo = ToDo; // Paneme muuutja külge
 
-   window.ToDo = ToDo; // Paneme muuutja külge
+  ToDo.routes = {
+    'home-view': {
+      'render': function(){
+        // käivitame siis kui lehte laeme
+        console.log('>>>>avaleht');
+      }
+    },
+    'list-view': {
+      'render': function(){
+        // käivitame siis kui lehte laeme
+        console.log('>>>>loend');
 
-   ToDo.routes = {
-     'home-view': {
-       'render': function(){
-         // käivitame siis kui lehte laeme
-         console.log('>>>>avaleht');
-       }
-     },
-     'list-view': {
-       'render': function(){
-         // käivitame siis kui lehte laeme
-         console.log('>>>>loend');
+        //simulatsioon laeb kaua
+        window.setTimeout(function(){
+        //document.querySelector('.loading').innerHTML = 'laetud!';
+        document.querySelector('.loading').style.display = 'none';
+        }, 3000);
 
-         //simulatsioon laeb kaua
-         window.setTimeout(function(){
-           document.querySelector('.loading').innerHTML = 'laetud!';
-         }, 3000);
+      }
+    },
+    'manage-view': {
+      'render': function(){
+      // käivitame siis kui lehte laeme
+      }
+    }
+  };
 
-       }
-     },
-     'manage-view': {
-       'render': function(){
-         // käivitame siis kui lehte laeme
-       }
-     }
-   };
+  // Kõik funktsioonid lähevad ToDo külge
+  ToDo.prototype = {
 
-   // Kõik funktsioonid lähevad ToDo külge
-   ToDo.prototype = {
+    init: function(){
+      console.log('Rakendus läks tööle');
 
-     init: function(){
-       console.log('Rakendus läks tööle');
+      //kuulan aadressirea vahetust
+      window.addEventListener('hashchange', this.routeChange.bind(this));
 
-       //kuulan aadressirea vahetust
-       window.addEventListener('hashchange', this.routeChange.bind(this));
+      // kui aadressireal ei ole hashi siis lisan juurde
+      if(!window.location.hash){
+        window.location.hash = 'home-view';
+        // routechange siin ei ole vaja sest käsitsi muutmine käivitab routechange event'i ikka
+      }else{
+        //esimesel käivitamisel vaatame urli üle ja uuendame menüüd
+        this.routeChange();
+      }
 
-       // kui aadressireal ei ole hashi siis lisan juurde
-       if(!window.location.hash){
-         window.location.hash = 'home-view';
-         // routechange siin ei ole vaja sest käsitsi muutmine käivitab routechange event'i ikka
-       }else{
-         //esimesel käivitamisel vaatame urli üle ja uuendame menüüd
-         this.routeChange();
-       }
+      //saan kätte ülesanded localStorage'ist kui on
+      if(localStorage.tasks){
+        //võtan stringi ja teen tagasi objektideks
+        this.tasks = JSON.parse(localStorage.tasks);
+        console.log('laadisin localStorageist massiiivi ' + this.tasks.length);
 
-       //saan kätte ülesanded localStorage'ist kui on
-       if(localStorage.tasks){
-           //võtan stringi ja teen tagasi objektideks
-           this.tasks = JSON.parse(localStorage.tasks);
-           console.log('laadisin localStorageist massiiivi ' + this.tasks.length);
+        //tekitan loendi htmli
+        this.tasks.forEach(function(item){
 
-           //tekitan loendi htmli
-           this.tasks.forEach(function(item){
+          var new_item = new Item(item.id, item.title, item.task);
 
-               var new_item = new Item(item.id, item.title, item.task);
+          var li = new_item.createHtmlElement();
+          document.querySelector('.list-of-tasks').appendChild(li);
 
-               var li = new_item.createHtmlElement();
-               document.querySelector('.list-of-tasks').appendChild(li);
+        });
 
-           });
-
-       }else {
-         //küsin AJAXiga
-         var xhttp = new XMLHttpRequest();
-         xhttp.onreadystatechange = function() {
-           if (xhttp.readyState == 4 && xhttp.status == 200) {
-              console.log(xhttp.responseText);
-              ToDo.instance.tasks=JSON.parse(xhttp.responseText);
-              console.log(ToDo.instance.tasks + "teen nüüd seda");
+      }else {
+        //küsin AJAXiga
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+            console.log(xhttp.responseText);
+            ToDo.instance.tasks=JSON.parse(xhttp.responseText);
+            console.log(ToDo.instance.tasks);
 
             //teen ülesanded htmli
             ToDo.instance.tasks.forEach(function(item){
@@ -107,261 +107,266 @@
               document.querySelector('.list-of-tasks').appendChild(li);
             });
 
-				   //salvestan localStoragisse
-				   localStorage.setItem('tasks', JSON.stringify(ToDo.instance.tasks));
+            //salvestan localStoragisse
+            localStorage.setItem('tasks', JSON.stringify(ToDo.instance.tasks));
 
-     			}
-     		};
+          }
+        };
 
-     		xhttp.open("GET", "save.php", true);
-     		xhttp.send();
-       }
+        xhttp.open("GET", "save.php", true);
+        xhttp.send();
+      }
 
 
-       // esimene loogika oleks see, et kuulame hiireklikki nupul
-       this.bindEvents();
+      // esimene loogika oleks see, et kuulame hiireklikki nupul
+      this.bindEvents();
 
-     },
+    },
 
-     bindEvents: function(){
-       document.querySelector('.add-new-item').addEventListener('click', this.addNewClick.bind(this));
+    bindEvents: function(){
+      document.querySelector('.add-new-item').addEventListener('click', this.addNewClick.bind(this));
 
-       //kuulan trükkimist otsikastis
-       document.querySelector('#search').addEventListener('keyup', this.search.bind(this));
+      //kuulan trükkimist otsikastis
+      document.querySelector('#search').addEventListener('keyup', this.search.bind(this));
 
-     },
-	 deleteItem: function(event){
+    },
+    deleteItem: function(event){
 
-		// millele vajutasin SPAN
-		console.log(event.target);
+      // millele vajutasin SPAN
+      console.log(event.target);
 
-		// tema parent ehk mille sees ta on LI
-		console.log(event.target.parentNode);
+      // tema parent ehk mille sees ta on LI
+      console.log(event.target.parentNode);
 
-		//mille sees see on UL
-		console.log(event.target.parentNode.parentNode);
+      //mille sees see on UL
+      console.log(event.target.parentNode.parentNode);
 
-		//id
-		console.log(event.target.dataset.id);
+      //id
+      console.log(event.target.dataset.id);
 
-		var c = confirm("Oled kindel?");
+      var c = confirm("Oled kindel?");
 
-		// vajutas no, pani ristist kinni
-		if(!c){	return; }
+      // vajutas no, pani ristist kinni
+      if(!c){	return; }
 
-		//KUSTUTAN
-		console.log('kustutan');
+      //KUSTUTAN
+      console.log('kustutan');
 
-		// KUSTUTAN HTMLI
-		var ul = event.target.parentNode.parentNode;
-		var li = event.target.parentNode;
+      // KUSTUTAN HTMLI
+      var ul = event.target.parentNode.parentNode;
+      var li = event.target.parentNode;
 
-		ul.removeChild(li);
+      ul.removeChild(li);
 
-		//KUSTUTAN OBJEKTI ja uuenda localStoragit
+      //KUSTUTAN OBJEKTI ja uuenda localStoragit
 
-		var delete_id = event.target.dataset.id;
+      var delete_id = event.target.dataset.id;
 
-		for(var i = 0; i < this.tasks.length; i++){
+      for(var i = 0; i < this.tasks.length; i++){
 
-			if(this.tasks[i].id == delete_id){
-				//see on see
-				//kustuta kohal i objekt ära
-				this.tasks.splice(i, 1);
-				break;
-			}
-		}
+        if(this.tasks[i].id == delete_id){
+          //see on see
+          //kustuta kohal i objekt ära
+          this.tasks.splice(i, 1);
+          break;
+        }
+      }
 
-		localStorage.setItem('tasks', JSON.stringify(this.tasks));
+      localStorage.setItem('tasks', JSON.stringify(this.tasks));
 
+      //AJAX
+      var xhttp = new XMLHttpRequest();
 
+      //mis juhtub kui päring lõppeb
+      xhttp.onreadystatechange = function() {
 
-	 },
-     search: function(event){
-         //otsikasti väärtus
-         var needle = document.querySelector('#search').value.toLowerCase();
-         console.log(needle);
+        console.log(xhttp.readyState);
 
-         var list = document.querySelectorAll('ul.list-of-tasks li');
-         console.log(list);
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
 
-         for(var i = 0; i < list.length; i++){
+          console.log(xhttp.responseText);
+        }
+      };
 
-             var li = list[i];
+      //teeb päringu
+      xhttp.open("GET", "delete.php?delete_id="+delete_id, true);
+      xhttp.send();
+      console.log(delete_id);
 
-             // ühe listitemi sisu tekst
-             var stack = li.querySelector('.content').innerHTML.toLowerCase();
+    },
+    search: function(event){
+      //otsikasti väärtus
+      var needle = document.querySelector('#search').value.toLowerCase();
+      console.log(needle);
 
-             //kas otsisõna on sisus olemas
-             if(stack.indexOf(needle) !== -1){
-                 //olemas
-                 li.style.display = 'list-item';
+      var list = document.querySelectorAll('ul.list-of-tasks li');
+      console.log(list);
 
-             }else{
-                 //ei ole, index on -1, peidan
-                 li.style.display = 'none';
+      for(var i = 0; i < list.length; i++){
 
-             }
+        var li = list[i];
 
-         }
-     },
+        // ühe listitemi sisu tekst
+        var stack = li.querySelector('.content').innerHTML.toLowerCase();
 
-     addNewClick: function(event){
-       //salvestame ülesande
-       //console.log(event);
+        //kas otsisõna on sisus olemas
+        if(stack.indexOf(needle) !== -1){
+          //olemas
+          li.style.display = 'list-item';
 
-       var title = document.querySelector('.title').value;
-       var task = document.querySelector('.task').value;
-       var due_date = document.querySelector('.due_date').value;
+        }else{
+          //ei ole, index on -1, peidan
+          li.style.display = 'none';
 
-       //console.log(title + ' ' + task);
-       //1) tekitan uue Item'i
-	   var id = guid();
-       var new_item = new Item(id, title, task, due_date);
+        }
+      }
+    },
 
-       //lisan massiiivi ülesande
-       this.tasks.push(new_item);
-       console.log(JSON.stringify(this.tasks));
-       // JSON'i stringina salvestan localStorage'isse
-       localStorage.setItem('tasks', JSON.stringify(this.tasks));
+    addNewClick: function(event){
+      //salvestame ülesande
+      //console.log(event);
 
+      var title = document.querySelector('.title').value;
+      var task = document.querySelector('.task').value;
+      var due_date = document.querySelector('.due_date').value;
 
-		//AJAX
-		var xhttp = new XMLHttpRequest();
+      //console.log(title + ' ' + task);
+      //1) tekitan uue Item'i
+      var id = guid();
+      var new_item = new Item(id, title, task, due_date);
 
-		//mis juhtub kui päring lõppeb
-		xhttp.onreadystatechange = function() {
+      //lisan massiiivi ülesande
+      this.tasks.push(new_item);
+      console.log(JSON.stringify(this.tasks));
+      // JSON'i stringina salvestan localStorage'isse
+      localStorage.setItem('tasks', JSON.stringify(this.tasks));
 
-			console.log(xhttp.readyState);
 
-			if (xhttp.readyState == 4 && xhttp.status == 200) {
+      //AJAX
+      var xhttp = new XMLHttpRequest();
 
-				console.log(xhttp.responseText);
-			}
-		};
+      //mis juhtub kui päring lõppeb
+      xhttp.onreadystatechange = function() {
 
-		//teeb päringu
-		xhttp.open("GET", "save.php?id="+id+"&title="+title+"&task="+task+"&due_date="+due_date, true);
-		xhttp.send();
+        console.log(xhttp.readyState);
 
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
 
-       // 2) lisan selle htmli listi juurde
-       var li = new_item.createHtmlElement();
-       document.querySelector('.list-of-tasks').appendChild(li);
+          console.log(xhttp.responseText);
+        }
+      };
 
+      //teeb päringu
+      xhttp.open("GET", "save.php?id="+id+"&title="+title+"&task="+task+"&due_date="+due_date, true);
+      xhttp.send();
 
-     },
 
-     routeChange: function(event){
+      // 2) lisan selle htmli listi juurde
+      var li = new_item.createHtmlElement();
+      document.querySelector('.list-of-tasks').appendChild(li);
 
-       //kirjutan muuutujasse lehe nime, võtan maha #
-       this.currentRoute = location.hash.slice(1);
-       console.log(this.currentRoute);
+      document.querySelector('.title').value = "";
+      document.querySelector('.task').value = "";
+      document.querySelector('.due_date').value = "";
 
-       //kas meil on selline leht olemas?
-       if(this.routes[this.currentRoute]){
 
-         //muudan menüü lingi aktiivseks
-         this.updateMenu();
+    },
 
-         this.routes[this.currentRoute].render();
+    routeChange: function(event){
+      //kirjutan muuutujasse lehe nime, võtan maha #
+      this.currentRoute = location.hash.slice(1);
+      console.log(this.currentRoute);
 
+      //kas meil on selline leht olemas?
+      if(this.routes[this.currentRoute]){
 
-       }else{
-         /// 404 - ei olnud
-       }
+        //muudan menüü lingi aktiivseks
+        this.updateMenu();
 
+        this.routes[this.currentRoute].render();
 
-     },
+      }else{
+        /// 404 - ei olnud
+      }
+    },
 
-     updateMenu: function() {
-       //http://stackoverflow.com/questions/195951/change-an-elements-class-with-javascript
-       //1) võtan maha aktiivse menüülingi kui on
-       document.querySelector('.active-menu').className = document.querySelector('.active-menu').className.replace('active-menu', '');
+    updateMenu: function() {
+      //http://stackoverflow.com/questions/195951/change-an-elements-class-with-javascript
+      //1) võtan maha aktiivse menüülingi kui on
+      document.querySelector('.active-menu').className = document.querySelector('.active-menu').className.replace('active-menu', '');
 
-       //2) lisan uuele juurde
-       //console.log(location.hash);
-       document.querySelector('.'+this.currentRoute).className += ' active-menu';
+      //2) lisan uuele juurde
+      //console.log(location.hash);
+      document.querySelector('.'+this.currentRoute).className += ' active-menu';
+    }
+  }; //ToDo LÕPP
 
-     }
 
-   }; //ToDo LÕPP
+  var Item = function(new_id, new_title, new_task, new_due_date){
+    this.id = new_id;
+    this.title = new_title;
+    this.task = new_task;
+    this.due_date = new_due_date;
+    console.log('created new item');
+  };
 
-   var Item = function(new_id, new_title, new_task, new_due_date){
-	 this.id = new_id;
-     this.title = new_title;
-     this.task = new_task;
-     this.due_date = new_due_date;
-     console.log('created new item');
-   };
+  Item.prototype = {
+    createHtmlElement: function(){
 
-   Item.prototype = {
-     createHtmlElement: function(){
+      var li = document.createElement('li');
 
-       // võttes title ja task ->
-       /*
-       li
-        span.letter
-          M <- title esimene täht
-        span.content
-          title | task
-       */
+      var span = document.createElement('span');
+      span.className = 'letter';
 
-       var li = document.createElement('li');
+      var letter = document.createTextNode(this.title.charAt(0));
+      span.appendChild(letter);
 
-       var span = document.createElement('span');
-       span.className = 'letter';
+      li.appendChild(span);
 
-       var letter = document.createTextNode(this.title.charAt(0));
-       span.appendChild(letter);
+      var span_with_content = document.createElement('span');
+      span_with_content.className = 'content';
 
-       li.appendChild(span);
+      var content = document.createTextNode(this.title + ' | ' + this.task + ' | ' + this.due_date);
+      span_with_content.appendChild(content);
 
-       var span_with_content = document.createElement('span');
-       span_with_content.className = 'content';
+      li.appendChild(span_with_content);
 
-       var content = document.createTextNode(this.title + ' | ' + this.task + ' | ' + this.due_date);
-       span_with_content.appendChild(content);
+      //DELETE nupp
+      var span_delete = document.createElement('span');
+      span_delete.style.color = "red";
+      span_delete.style.cursor = "pointer";
 
-       li.appendChild(span_with_content);
+      //kustutamiseks panen id kaasa
+      span_delete.setAttribute("data-id", this.id);
 
-	   //DELETE nupp
-	   var span_delete = document.createElement('span');
-	   span_delete.style.color = "red";
-	   span_delete.style.cursor = "pointer";
+      span_delete.innerHTML = " Delete";
 
-	   //kustutamiseks panen id kaasa
-	   span_delete.setAttribute("data-id", this.id);
+      li.appendChild(span_delete);
 
-	   span_delete.innerHTML = " Delete";
+      //keegi vajutas nuppu
+      span_delete.addEventListener("click", ToDo.instance.deleteItem.bind(ToDo.instance));
 
-	   li.appendChild(span_delete);
+      return li;
+    }
+  };
 
-	   //keegi vajutas nuppu
-	   span_delete.addEventListener("click", ToDo.instance.deleteItem.bind(ToDo.instance));
+  //HELPER
+  function guid(){
+    var d = new Date().getTime();
+    if(window.performance && typeof window.performance.now === "function"){
+      d += performance.now(); //use high-precision timer if available
+    }
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = (d + Math.random()*16)%16 | 0;
+      d = Math.floor(d/16);
+      return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+    });
+    return uuid;
+  }
 
-       return li;
-
-     }
-   };
-
-   //HELPER
-   function guid(){
-		var d = new Date().getTime();
-		if(window.performance && typeof window.performance.now === "function"){
-			d += performance.now(); //use high-precision timer if available
-		}
-		var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-			var r = (d + Math.random()*16)%16 | 0;
-			d = Math.floor(d/16);
-			return (c=='x' ? r : (r&0x3|0x8)).toString(16);
-		});
-		return uuid;
-	}
-
-   // kui leht laetud käivitan ToDo rakenduse
-   window.onload = function(){
-     var app = new ToDo();
-   };
+  // kui leht laetud käivitan ToDo rakenduse
+  window.onload = function(){
+    var app = new ToDo();
+  };
 
 })();
