@@ -1,1 +1,1 @@
-[{"id":"186ebd1e-ae5e-499a-bb6f-09faa38740e4","title":"Ela","task":"\u00c4ra ole surnud. :D","due_date":"2222-06-09"},{"id":"2e754110-b49d-4013-8207-5552e7ae4886","title":"Loomaaed","task":"Mine loomaaeda. ","due_date":"2016-06-16"}]
+[{"id":"186ebd1e-ae5e-499a-bb6f-09faa38740e4","title":"Ela","task":"\u00c4ra ole surnud. :D","due_date":"2222-06-09"},{"id":"2e754110-b49d-4013-8207-5552e7ae4886","title":"Loomaaed","task":"Mine loomaaeda.","due_date":"2016-06-16"}]

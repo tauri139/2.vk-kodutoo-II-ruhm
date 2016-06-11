@@ -126,6 +126,12 @@
     bindEvents: function(){
       document.querySelector('.add-new-item').addEventListener('click', this.addNewClick.bind(this));
 
+      document.querySelector('.change-item').addEventListener('click', this.ChangeClick.bind(this));
+
+      document.querySelector('.cancel-change-item').addEventListener('click', this.CancelChangeClick.bind(this));
+
+
+
       //kuulan trükkimist otsikastis
       document.querySelector('#search').addEventListener('keyup', this.search.bind(this));
 
@@ -194,60 +200,23 @@
 
     },
     changeItem: function(event){
-      var c = confirm("Oled kindel?");
-
-      // vajutas no, pani ristist kinni
-      if(!c){	return; }
-
       //MUUDAN
-      console.log('muudan');
+      console.log(JSON.parse(localStorage.tasks));
 
-      var change_id = event.target.dataset.id;
+      var tasks = JSON.parse(localStorage.tasks);
+      console.log(tasks[1].title);
+      for(var t=0; t < tasks.length; t++){
+        if(tasks[t] .id== event.target.dataset.id){
 
-      var li = event.target.parentNode;
-
-      document.querySelector('.change').style.display = 'block';
-
-      if(0<1){
-
-        for(var i = 0; i < this.tasks.length; i++){
-
-          if(this.tasks[i].id == change_id){
-            //muuda kohal i objekt ära
-            console.log("MUUTMINE HAKKAS PIHTA");
-            break;
-          }
+          document.querySelector('.id_holder').value = tasks[t].id;
+          document.querySelector('.change_title').value = tasks[t].title;
+          document.querySelector('.change_task').value = tasks[t].task;
+          document.querySelector('.change_due_date').value = tasks[t].due_date;
+          break;
         }
-
-        localStorage.setItem('tasks', JSON.stringify(this.tasks));
-
-        //AJAX
-        var xhttp = new XMLHttpRequest();
-
-        //mis juhtub kui päring lõppeb
-        xhttp.onreadystatechange = function() {
-
-          console.log(xhttp.readyState);
-
-          if (xhttp.readyState == 4 && xhttp.status == 200) {
-
-            console.log(xhttp.responseText);
-          }
-        };
-
-        delete_id = change_id;
-        id = change_id;
-
-        //teeb päringu
-        //xhttp.open("GET", "change.php?change_id="+change_id, true);
-        xhttp.open("GET", "delete.php?delete_id="+delete_id, true);
-        xhttp.open("GET", "save.php?id="+id+"&title="+title+"&task="+task+"&due_date="+due_date, true);
-        xhttp.send();
-        console.log(change_id);
-      }else{
-        console.log("Ei muudetud midagi");
       }
 
+      document.querySelector('.change').style.display = 'block';
 
     },
     search: function(event){
@@ -276,6 +245,91 @@
 
         }
       }
+    },
+    CancelChangeClick: function(){
+      document.querySelector('.change').style.display = "none";
+
+    },
+
+    ChangeClick: function(event){
+      console.log("ChangeClick");
+      var id = document.querySelector('.id_holder').value;
+      var title = document.querySelector('.change_title').value;
+      var task = document.querySelector('.change_task').value;
+      var due_date = document.querySelector('.change_due_date').value;
+      var delete_id = document.querySelector('.id_holder').value;
+
+      for(var i = 0; i < this.tasks.length; i++){
+
+        if(this.tasks[i].id == delete_id){
+          //kustuta kohal i objekt ära
+          this.tasks.splice(i, 1);
+          break;
+        }
+      }
+
+      localStorage.setItem('tasks', JSON.stringify(this.tasks));
+
+      // KUSTUTAN HTMLI
+      var ul = event.target.parentNode.parentNode;
+      var li = event.target.parentNode;
+
+      ul.removeChild(li);
+
+      //AJAX
+      var xhttp = new XMLHttpRequest();
+
+      //mis juhtub kui päring lõppeb
+      xhttp.onreadystatechange = function() {
+
+        console.log(xhttp.readyState);
+
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+
+          console.log(xhttp.responseText);
+        }
+      };
+
+      //teeb päringu
+      xhttp.open("GET", "delete.php?delete_id="+delete_id, true);
+
+      xhttp.send();
+
+
+      var new_item = new Item(id, title, task, due_date);
+
+      this.tasks.unshift(new_item);
+      console.log(JSON.stringify(this.tasks));
+      // JSON'i stringina salvestan localStorage'isse
+      localStorage.setItem('tasks', JSON.stringify(this.tasks));
+
+
+      //AJAX
+      var xhttp2 = new XMLHttpRequest();
+      //mis juhtub kui päring lõppeb
+      xhttp2.onreadystatechange = function() {
+
+        console.log(xhttp2.readyState);
+
+        if (xhttp2.readyState == 4 && xhttp2.status == 200) {
+
+          console.log(xhttp2.responseText);
+        }
+      };
+
+      //teeb päringu
+      xhttp2.open("GET", "save.php?id="+id+"&title="+title+"&task="+task+"&due_date="+due_date, true);
+      xhttp2.send();
+
+
+      // 2) lisan selle htmli listi juurde
+      li = new_item.createHtmlElement();
+      document.querySelector('.list-of-tasks').appendChild(li);
+
+      document.querySelector('.change').style.display = "none";
+
+      location.reload();
+
     },
 
     addNewClick: function(event){

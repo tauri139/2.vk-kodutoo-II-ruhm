@@ -14,7 +14,7 @@
     $object->due_date = $_GET["due_date"];
 
     //lisan massiivi juurde
-    array_push($entries, $object);
+    array_unshift($entries, $object);
 
     //teen stringiks
     $json = json_encode($entries);

@@ -97,7 +97,10 @@ main {
 }
 .title,
 .task,
-.due_date {
+.due_date,
+.change_title,
+.change_task,
+.change_due_date {
     width: 100%;
     margin-bottom: 10px;
     margin-top: 4px;
@@ -105,7 +108,9 @@ main {
     border: 1px solid rgba(0, 0, 255, 0.2);
     border-bottom: 1px solid rgb(0, 17, 255);
 }
-.add-new-item {
+.add-new-item,
+.change-item,
+.cancel-change-item {
     background-color: #000;
     padding: 10px;
     border: 1px solid rgb(100, 100, 100);

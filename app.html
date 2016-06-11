@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>ToDo</title>
   <script src="app.js" charset="utf-8"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -22,16 +23,17 @@
       <p class="loading">Laeb...</p><br>
       <input type="search" placeholder="Otsi ülesannet..." id="search"><br>
       <div class="change">
-        <label for="title">Nimi: </label><br>
-        <input type="text" placeholder="..." name="title" class="title"><br>
+        <p name="id_holder" class="id_holder"></p>
+        <label for="change_title">Nimi: </label><br>
+        <input type="text" placeholder="..." name="change_title" class="change_title"><br>
 
-        <label for="task">Ülesanne: </label><br>
-        <input type="text" placeholder="..." name="task" class="task"><br>
+        <label for="change_task">Ülesanne: </label><br>
+        <input type="text" placeholder="..." name="change_task" class="change_task"><br>
 
-        <label for="due_date">Kuupäevaks: </lable><br>
-        <input type="date" name="due_date" class="due_date"><br>
+        <label for="change_due_date">Kuupäevaks: </lable><br>
+        <input type="date" name="change_due_date" class="change_due_date"><br>
 
-        <button class="change-item pull-right">Muuda</button>
+        <button class="cancel-change-item pull-left">Loobu</button><button class="change-item pull-left">Muuda</button><br>
       </div>
       <ul class="list-of-tasks"></ul>
     </div>
